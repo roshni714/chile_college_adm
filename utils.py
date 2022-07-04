@@ -1,5 +1,4 @@
 import pandas as pd
-import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import datetime
@@ -116,9 +115,9 @@ def get_enrolled_ids_year(adm_year):
     df = get_enrollment_df(adm_year, enrollment_mapper)
     return set(df["Masked ID for student"])
 
-def get_graduated_on_time_ids_year(adm_year):
+def get_on_time_grad_ids_year(adm_year):
     grad_mapper = create_translation_dic("Graduation")
-    grad_df = get_graduation_df(adm_year, num_sem, grad_mapper)
+    grad_df = get_graduation_df(adm_year, None, grad_mapper)
     
     adm_sem = grad_df['Semester of admission as a freshman'].astype("int").to_numpy()
     adm_year = grad_df['Year of admission as a freshman'].astype("int").to_numpy()
