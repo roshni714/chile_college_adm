@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import datetime
-from utils import get_uc_engineering_id
+from utils import get_uc_engineering_id, create_translation_dic
 
 def get_graduation_df(adm_year, num_sem, translation_mapper, uc_eng_only=True):
     relevant_keys=['Student identifier',
@@ -53,10 +53,15 @@ def get_graduation_df(adm_year, num_sem, translation_mapper, uc_eng_only=True):
     main_df = pd.concat(all_df, ignore_index=True)
     return main_df
 
-
-def get_on_time_grad_ids_year(adm_year):
+def get_grad_ids_year(adm_year, uc_eng_only=True):
     grad_mapper = create_translation_dic("Graduation")
-    grad_df = get_graduation_df(adm_year, None, grad_mapper)
+    grad_df = get_graduation_df(adm_year, None, grad_mapper, uc_eng_only)
+    return set([int(i) for i in grad_df["Student identifier"]])
+
+
+def get_on_time_grad_ids_year(adm_year, uc_eng_only=True):
+    grad_mapper = create_translation_dic("Graduation")
+    grad_df = get_graduation_df(adm_year, None, grad_mapper, uc_eng_only)
     
     adm_sem = grad_df['Semester of admission as a freshman'].astype("int").to_numpy()
     adm_year = grad_df['Year of admission as a freshman'].astype("int").to_numpy()

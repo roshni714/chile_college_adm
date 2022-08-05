@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import datetime
+from utils import create_translation_dic, get_uc_engineering_id
 
-def get_enrollment_df(adm_year, translation_mapper, school_id=None):
+def get_enrollment_df(adm_year, translation_mapper, uc_eng_only=True):
     relevant_keys=['Career code (university-degree)', 'Masked ID for student','Year of academic process for admission']
     all_df = []
     # Read in data
@@ -23,8 +24,8 @@ def get_enrollment_df(adm_year, translation_mapper, school_id=None):
                             'Ï»¿TIPO_IDENTIFICACION': "TIPO_IDENTIFICACION"
                            })
     df = df.rename(columns=translation_mapper)
-    if school_id is not None:
-        df = df[df['Career code (university-degree)'] == school_id]
+    if uc_eng_only:
+        df = df[df['Career code (university-degree)'] == get_uc_engineering_id(adm_year, sheet="enrollment")]
 
     #Only look at students with admission year equal to adm_year
     df = df[df['Year of academic process for admission']==adm_year]
@@ -35,7 +36,7 @@ def get_enrollment_df(adm_year, translation_mapper, school_id=None):
     main_df = pd.concat(all_df, ignore_index=True)
     return main_df
 
-def get_enrolled_ids_year(adm_year):
+def get_enrolled_ids_year(adm_year, uc_eng_only=True):
     enrollment_mapper = create_translation_dic("Enrollment")
-    df = get_enrollment_df(adm_year, enrollment_mapper)
+    df = get_enrollment_df(adm_year, enrollment_mapper, uc_eng_only)
     return set(df["Masked ID for student"])
