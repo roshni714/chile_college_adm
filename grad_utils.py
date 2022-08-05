@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import datetime
+from utils import get_uc_engineering_id
 
-def get_graduation_df(adm_year, num_sem, translation_mapper, ids=None):
+def get_graduation_df(adm_year, num_sem, translation_mapper, uc_eng_only=True):
     relevant_keys=['Student identifier',
                    'Unique code for program',
                    'Year of admission as a freshman',
@@ -23,9 +24,9 @@ def get_graduation_df(adm_year, num_sem, translation_mapper, ids=None):
         df.columns = map(str.upper, df.columns)
         df = df.rename(columns=translation_mapper)
         
-        #Only look at students with relevant ids
-        if ids is not None:
-            df = df[df['Unique code for program'].isin(ids)]
+        #Only look at students with ids from UC Engineering
+        if uc_eng_only:
+            df = df[df['Unique code for program'].isin(get_uc_engineering_id(i, sheet="graduation"))]
         
         #Only look at students with admission year equal to adm_year
         df = df[df['Year of admission as a freshman']==adm_year]
@@ -33,11 +34,11 @@ def get_graduation_df(adm_year, num_sem, translation_mapper, ids=None):
             df = df[df['Total theoretical duration of the degree (in semesters)']=="{}".format(num_sem)]
         
         # Drop rows that have NaN in important columns
-        df = df[df['Year of admission as a freshman'].notna()]
-        df = df[df['Semester of admission as a freshman'].notna()]
-        df = df[df['Date of the title (YYYYMMDD)'].notna()]
-        df = df[df['Total theoretical duration of the degree (in semesters)'].notna()]
-        df = df[df['Student identifier'].notna()]
+#         df = df[df['Year of admission as a freshman'].notna()]
+#         df = df[df['Semester of admission as a freshman'].notna()]
+#         df = df[df['Date of the title (YYYYMMDD)'].notna()]
+#         df = df[df['Total theoretical duration of the degree (in semesters)'].notna()]
+#         df = df[df['Student identifier'].notna()]
         
         df = df[relevant_keys]
         df.reset_index(inplace=True, drop=True)
