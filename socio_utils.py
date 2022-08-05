@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import datetime
+from utils import create_translation_dic
 
 def get_socioeconomic_df(adm_year, threshold, translation_mapper):
     relevant_keys=['Masked ID for student', 'Year of academic process for admission', 'Family income']
